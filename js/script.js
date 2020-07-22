@@ -5,44 +5,42 @@
 // se è > di 5 il quadrato diventa verde.
 // Il numero ottenuto appare al centro
 // del quadrato
-var id = 0;
+
+// var id = 0;
 
 function addNewIntListener() {
-  var btn = $('#btn');
-  btn.click(getNewIntListener);
+  var input = $('.slot');
+  input.click(getNewIntListener);
 }
 
 function getNewIntListener() {
+  var target = $(this);
 
   $.ajax({
     url: 'https://flynn.boolean.careers/exercises/api/random/int',
     method: 'GET',
     success: function (data, state) {
-      var target = $('.slot[data-id=' + id + ']');
 
       var success = data['success'];
       var value = data['response'];
-      var isValueEven = (value % 2 === 0);
 
       if (success) {
-        if (value <= 5) {
+        if (value <= 5 && $(target).hasClass('empty')) {
           target.append(value);
+          $(target).removeClass('empty');
           $(target).addClass('yellow');
-        } else if (value > 5) {
+        } else if (value > 5 && $(target).hasClass('empty')) {
           target.append(value);
+          $(target).removeClass('empty');
           $(target).addClass('green');
         }
       } else {
         console.log('error');
       }
 
-      id += 1;
-
-      if (id > 36) {
-        alert('Gioco Finito');
-        location.reload();
+      if ($('.slot.empty').length == 0) {
+        setTimeout(gameOver, 10);
       }
-
     },
 
     error: function (request, state, error) {
@@ -51,6 +49,11 @@ function getNewIntListener() {
       console.log('error', error);
     }
   });
+}
+
+function gameOver() {
+  alert('Gioco Finito. Premi OK per giocare ancora.');
+  location.reload();
 }
 
 
